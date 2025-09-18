@@ -1,45 +1,37 @@
 import { supabase } from "@/lib/supabaseClient"
 import { getCurrentUserId } from "../authService"
 
-/** ---------- Types ---------- */
 export type Education = {
   id: string
   profile_id: string
   school: string
-  program: string   // e.g. "Bachelor of Science, Computer Science"
+  program: string
   start_date: string
   end_date: string
-  gpa?: string | null
-  description?: string | null
+  gpa?: string
+  description?: string
 }
 
-/** ---------- Reads ---------- */
-
-/** Get all education entries for current user */
-export async function getEducation(): Promise<Education[]> {
-  const userId = await getCurrentUserId()
-
+// Get education
+export async function getEducation(profileId: string): Promise<Education[]> {
   const { data, error } = await supabase
     .from("education")
-    .select("*")
-    .eq("profile_id", userId)
-    .order("start_date", { ascending: false })
+    .select("id, profile_id, school, program, start_date, end_date, gpa, description")
+    .eq("profile_id", profileId)
 
   if (error) throw error
   return data || []
 }
 
-/** ---------- Writes ---------- */
-
-/** Add a new education entry */
-export async function addEducation(
-  entry: Omit<Education, "id" | "profile_id">
-): Promise<Education> {
+// Add education
+export async function addEducation(edu: Partial<Education>): Promise<Education> {
   const userId = await getCurrentUserId()
+
+  const { isEditing, ...cleanEdu } = edu as any
 
   const { data, error } = await supabase
     .from("education")
-    .insert({ ...entry, profile_id: userId })
+    .insert([{ ...cleanEdu, profile_id: userId }]) // ✅ use current userId
     .select()
     .single()
 
@@ -47,18 +39,15 @@ export async function addEducation(
   return data as Education
 }
 
-/** Update an education entry */
-export async function updateEducation(
-  id: string,
-  entry: Partial<Omit<Education, "id" | "profile_id">>
-): Promise<Education> {
-  const userId = await getCurrentUserId()
+
+// Update education
+export async function updateEducation(id: string, edu: Partial<Education>): Promise<Education> {
+  const { isEditing, ...cleanEdu } = edu as any
 
   const { data, error } = await supabase
     .from("education")
-    .update(entry)
+    .update(cleanEdu)
     .eq("id", id)
-    .eq("profile_id", userId)
     .select()
     .single()
 
@@ -66,16 +55,8 @@ export async function updateEducation(
   return data as Education
 }
 
-/** Delete an education entry */
-export async function deleteEducation(id: string): Promise<boolean> {
-  const userId = await getCurrentUserId()
-
-  const { error } = await supabase
-    .from("education")
-    .delete()
-    .eq("id", id)
-    .eq("profile_id", userId)
-
+// Delete education
+export async function deleteEducation(id: string) {
+  const { error } = await supabase.from("education").delete().eq("id", id)
   if (error) throw error
-  return true
 }

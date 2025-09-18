@@ -5,13 +5,13 @@ import {
   addEducation,
   updateEducation,
   deleteEducation,
-  type Education as DbEducation,
+  type Education,
 } from "../../services/profile/educationService"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/Button"
 
-// Extend DB type with UI-only fields
-type EducationUI = DbEducation & { isEditing?: boolean }
+// UI-only type → extends DB type with isEditing
+type EducationUI = Education & { isEditing?: boolean }
 
 export default function EducationTab() {
   const [education, setEducation] = useState<EducationUI[]>([])
@@ -22,8 +22,7 @@ export default function EducationTab() {
     const fetchData = async () => {
       const user = (await supabase.auth.getUser()).data.user
       if (!user) return
-      const data = await getEducation()
-      // Add isEditing=false to each record
+      const data = await getEducation(user.id)
       setEducation(data.map((e) => ({ ...e, isEditing: false })))
       setLoading(false)
     }
@@ -45,12 +44,16 @@ export default function EducationTab() {
     if (!user) return
 
     const edu = education[index]
-    let saved: DbEducation
 
-    if (edu.id) {
-      saved = await updateEducation(edu.id, edu)
+    let saved: Education
+    if (edu.id && edu.id !== "") {
+      // Update existing
+      const { isEditing, ...cleanEdu } = edu
+      saved = await updateEducation(edu.id, cleanEdu)
     } else {
-      saved = await addEducation(edu)
+      // Add new (don’t send id, Supabase will generate it)
+      const { isEditing, id, ...cleanEdu } = edu
+      saved = await addEducation(cleanEdu)
     }
 
     const updated = [...education]
@@ -62,8 +65,6 @@ export default function EducationTab() {
     setEducation([
       ...education,
       {
-        id: "",
-        profile_id: "",
         school: "",
         program: "",
         start_date: "",
@@ -71,7 +72,7 @@ export default function EducationTab() {
         gpa: "",
         description: "",
         isEditing: true,
-      },
+      } as EducationUI,
     ])
   }
 
@@ -115,7 +116,7 @@ export default function EducationTab() {
                     value={edu.school || ""}
                     onChange={(e) => handleChange(index, "school", e.target.value)}
                     className="w-full border rounded px-3 py-2"
-                    placeholder="e.g. Stanford University"
+                    placeholder="e.g. Harvard University"
                   />
                 </div>
 
@@ -138,9 +139,7 @@ export default function EducationTab() {
                     <input
                       type="date"
                       value={edu.start_date || ""}
-                      onChange={(e) =>
-                        handleChange(index, "start_date", e.target.value)
-                      }
+                      onChange={(e) => handleChange(index, "start_date", e.target.value)}
                       className="w-full border rounded px-3 py-2"
                     />
                   </div>
@@ -197,9 +196,7 @@ export default function EducationTab() {
               // --- VIEW MODE ---
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">
-                    {edu.school || "Untitled School"}
-                  </h3>
+                  <h3 className="text-lg font-semibold">{edu.school || "Untitled School"}</h3>
                   <Button variant="outline" onClick={() => toggleEdit(index)}>
                     Edit
                   </Button>
@@ -208,9 +205,7 @@ export default function EducationTab() {
                 <p className="text-gray-500 text-sm">
                   {edu.start_date} – {edu.end_date || "Present"}
                 </p>
-                {edu.gpa && (
-                  <p className="text-gray-600 text-sm">GPA: {edu.gpa}</p>
-                )}
+                {edu.gpa && <p className="text-gray-600 text-sm">GPA: {edu.gpa}</p>}
                 <p className="text-gray-700 mt-2">{edu.description}</p>
               </div>
             )}

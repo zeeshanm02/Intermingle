@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/Button"
 import { getProfile, updateProfile, type Profile } from "../../services/profile/profileService"
 import { uploadProfilePicture } from "../../services/profile/profilePictureService"
 import { uploadResume, getResumes, deleteResume, type Resume } from "../../services/profile/resumeService"
+import blankProfilePicture from "@/assets/blankProfilePicture.svg"
+
 
 export default function AboutMeTab() {
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -78,13 +80,12 @@ export default function AboutMeTab() {
           {/* Profile Picture Upload */}
           <div>
             <label className="block text-sm font-medium">Profile Picture</label>
-            {profile?.profile_picture_url && (
-              <img
-                src={profile.profile_picture_url}
-                alt="Profile"
-                className="w-24 h-24 rounded-full object-cover mt-2"
-              />
-            )}
+          <img
+            src={profile?.profile_picture_url || blankProfilePicture}
+            alt="Profile"
+            className="w-24 h-24 rounded-full object-cover border"
+          />
+
             <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           </div>
 
