@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",          // ✅ for React 17+ (or "react" for older)
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+   "moduleResolution": "bundler",
+    "module": "esnext",
+    "target": "esnext",
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
