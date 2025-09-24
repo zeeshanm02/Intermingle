@@ -1,13 +1,108 @@
-import CandidateCard from "../../CandidateCard"
-import { DocumentArrowDownIcon } from "@heroicons/react/24/outline"
+import { useEffect, useState } from "react"
+import { supabase } from "../../../../lib/supabaseClient"
+import {
+  getDocuments,
+  uploadDocument,
+  deleteDocument,
+  type Document,
+} from "../../../services/profileServices/documentsService"
+import { Card } from "../../../../components/layout/Card"
+import Button from "../../../../components/ui/Button"
 
 export default function Documents() {
+  const [documents, setDocuments] = useState<(Document & { signedUrl?: string })[]>([])
+  const [loading, setLoading] = useState(true)
+  const [name, setName] = useState("")
+  const [files, setFiles] = useState<File[]>([])
+
+  useEffect(() => {
+    const fetchDocs = async () => {
+      const data = await getDocuments()
+      setDocuments(data)
+      setLoading(false)
+    }
+    fetchDocs()
+  }, [])
+
+  const handleUpload = async () => {
+    if (files.length === 0 || !name) return
+
+    const uploadedDocs = await Promise.all(
+      files.map(async (file) => {
+        const doc = await uploadDocument(name, file)
+
+        const { data: signed } = await supabase.storage
+          .from("documents")
+          .createSignedUrl(doc.file_path, 60 * 60)
+
+        return { ...doc, signedUrl: signed?.signedUrl }
+      })
+    )
+
+    setDocuments([...uploadedDocs, ...documents])
+    setName("")
+    setFiles([])
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteDocument(id)
+    setDocuments(documents.filter((doc) => doc.id !== id))
+  }
+
   return (
-  <CandidateCard title="Documents" icon={<DocumentArrowDownIcon className="w-5 h-5" />} addLabel="Upload Document">
-      <ul className="list-disc list-inside text-gray-700">
-        <li><a href="#" className="text-blue-600 underline">Resume.pdf</a></li>
-        <li><a href="#" className="text-blue-600 underline">Certificate_AWS.pdf</a></li>
-      </ul>
-    </CandidateCard>
+    <Card title="Documents">
+      {/* Upload form */}
+      <div className="flex gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Document name (e.g. Resume, Certificate)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="border p-2 rounded flex-1"
+        />
+        <input
+          type="file"
+          multiple
+          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+          className="border p-2 rounded"
+        />
+        <Button onClick={handleUpload}>Upload</Button>
+      </div>
+
+      {/* Documents list */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : documents.length === 0 ? (
+        <p>No documents uploaded yet.</p>
+      ) : (
+        <ul className="space-y-3">
+          {documents.map((doc, index) => (
+            <li
+              key={doc.id}
+              className={`flex justify-between items-center p-4 rounded-lg shadow-sm border 
+                ${index % 3 === 0 ? "bg-blue-50" : index % 3 === 1 ? "bg-green-50" : "bg-yellow-50"}`}
+            >
+              <div>
+                <p className="font-semibold">{doc.name}</p>
+                <a
+                  href={doc.signedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  View Document
+                </a>
+              </div>
+              <Button
+                onClick={() => handleDelete(doc.id)}
+                className="bg-red-500 hover:bg-red-600 text-white"
+              >
+                Delete
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
   )
 }

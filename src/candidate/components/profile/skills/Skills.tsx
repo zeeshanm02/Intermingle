@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react"
 import Card from "../../CandidateCard"
-import { WrenchScrewdriverIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
+import {
+  WrenchScrewdriverIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline"
 import { supabase } from "../../../../lib/supabaseClient"
 import {
   getSkills,
@@ -9,6 +12,7 @@ import {
 } from "../../../services/profileServices/skillsService"
 import AddSkillForm from "./AddSkillForm"
 import { useConfirm } from "../../../../components/ui/ConfirmProvider"
+import { cardColors } from "../../../../utils/colors"
 
 export default function SkillsSection() {
   const [skills, setSkills] = useState<Skill[]>([])
@@ -40,12 +44,6 @@ export default function SkillsSection() {
     fetchData()
   }
 
-  const gradients = [
-    "bg-gradient-to-r from-indigo-50 to-blue-100",
-    "bg-gradient-to-r from-green-50 to-emerald-100",
-    "bg-gradient-to-r from-amber-50 to-orange-100",
-  ]
-
   return (
     <Card
       title="Skills"
@@ -62,7 +60,9 @@ export default function SkillsSection() {
               {skills.map((s, i) => (
                 <article
                   key={s.id}
-                  className={`relative p-3 border border-black rounded-md shadow-[3px_3px_0px_rgba(0,0,0,1)] ${gradients[i % gradients.length]}`}
+                  className={`relative p-3 border border-black rounded-md shadow-[3px_3px_0px_rgba(0,0,0,1)] ${
+                    cardColors[i % cardColors.length]
+                  }`}
                 >
                   <div className="absolute top-2 right-2 flex gap-2">
                     <button

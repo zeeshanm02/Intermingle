@@ -1,4 +1,4 @@
-import Sidebar from "../../components/layout/Sidebar"
+import Sidebar from "../components/layout/Sidebar"
 
 // Profile section components
 import PersonalInfo from "../components/profile/personalInfo/PersonalInfo"
@@ -13,22 +13,23 @@ import Documents from "../components/profile/documents/Documents"
 export default function Profile() {
   return (
     <div className="flex min-h-screen bg-[#f5faff]">
-      {/* Sidebar stays exactly as before */}
-      <Sidebar />
+      {/* Sidebar pinned on the left */}
+      <aside className="fixed top-0 left-0 h-screen w-64 border-r border-black bg-[#f0f8ff] shadow-lg z-50">
+        <Sidebar />
+      </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6 lg:p-10">
+      {/* Main content, shifted right */}
+      <main className="flex-1 ml-64 p-6 lg:p-10 overflow-y-auto">
         <h1 className="mb-6 text-2xl font-bold">My Profile</h1>
 
         {/* Two-column layout on lg+, stacks on mobile */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* Left rail: compact sections; sticky so it stays visible */}
+          {/* Left rail: compact sections */}
           <div className="space-y-6 lg:col-span-4 lg:sticky lg:top-6 self-start">
             <PersonalInfo />
             <Skills />
             <Interests />
             <Hobbies />
-            {/* If you add “My Story” later, it fits nicely here too */}
           </div>
 
           {/* Right rail: content-heavy sections */}

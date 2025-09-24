@@ -1,7 +1,9 @@
 import { HomeIcon, DocumentTextIcon, BriefcaseIcon, UserIcon, Cog6ToothIcon } from "@heroicons/react/24/outline"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 export default function Sidebar() {
+  const location = useLocation()
+
   const items = [
     { icon: <HomeIcon className="w-5 h-5" />, label: "Dashboard", path: "/candidate/dashboard" },
     { icon: <DocumentTextIcon className="w-5 h-5" />, label: "Applications", path: "/candidate/applications" },
@@ -11,7 +13,7 @@ export default function Sidebar() {
   ]
 
   return (
-    <aside className="w-64 bg-[#f0f8ff] text-black flex flex-col p-6 shadow-md">
+    <aside className="w-64 fixed top-0 left-0 h-screen bg-[#f0f8ff] text-black flex flex-col p-6 shadow-md border-r border-black">
       {/* Profile */}
       <div className="flex flex-col items-center mb-8">
         <img
@@ -24,22 +26,23 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="space-y-4">
-        {items.map(({ icon, label, path }) => (
-          <Link
-            key={label}
-            to={path}
-            className="flex items-center gap-3 px-4 py-2 w-full rounded-md font-bold
-                       bg-[#1062fe] text-white
-                       border border-black
-                       shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-                       hover:translate-y-[1px] hover:translate-x-[1px]
-                       hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                       cursor-pointer transition"
-          >
-            {icon}
-            <span>{label}</span>
-          </Link>
-        ))}
+        {items.map(({ icon, label, path }) => {
+          const active = location.pathname === path
+          return (
+            <Link
+              key={label}
+              to={path}
+              className={`flex items-center gap-3 px-4 py-2 w-full rounded-md font-bold border border-black shadow-[3px_3px_0px_rgba(0,0,0,1)] transition
+                ${active
+                  ? "bg-[#1062fe] text-white"
+                  : "bg-white hover:bg-[#e0eaff] text-black"}
+              `}
+            >
+              {icon}
+              <span>{label}</span>
+            </Link>
+          )
+        })}
       </nav>
     </aside>
   )
