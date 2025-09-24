@@ -1,14 +1,15 @@
 // src/auth/AuthProvider.tsx
 import { createContext, useContext, useEffect, useState } from "react"
 import { supabase } from "../lib/supabaseClient"
-import Loader from "../components/ui/Loader" // 👈 make sure Loader.tsx exists
 
 type Profile = {
   id: string
   full_name?: string
   email?: string
   role: "candidate" | "entity" | "admin"
-  profile_picture_url?: string | null 
+  profile_picture_url?: string | null
+  location?: string | null
+  affidavit?: string | null
 }
 
 type AuthContextType = {
@@ -16,19 +17,16 @@ type AuthContextType = {
   profile: Profile | null
   loading: boolean
   signOut: () => Promise<void>
-  setProfile: React.Dispatch<React.SetStateAction<Profile | null>> // ✅ add this
+  setProfile: React.Dispatch<React.SetStateAction<Profile | null>>
 }
-
 
 const AuthCtx = createContext<AuthContextType>({
   user: null,
   profile: null,
   loading: true,
   signOut: async () => {},
-  setProfile: () => {}, // ✅ dummy function so context type is satisfied
+  setProfile: () => {},
 })
-
-
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null)
@@ -37,19 +35,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const init = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
 
       if (user) {
-        const { data: profile } = await supabase
+        const { data, error } = await supabase
           .from("profiles")
-          .select("*")
+          .select("id, full_name, email, role, profile_picture_url, location, affidavit")
           .eq("id", user.id)
           .single()
 
-        setProfile(profile)
+        if (!error && data) {
+          setProfile(data)
+        }
       }
       setLoading(false)
     }
@@ -62,18 +60,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null)
   }
 
-  if (loading) {
-    return <Loader /> // 👈 loader while fetching auth/profile
-  }
-
   return (
     <AuthCtx.Provider value={{ user, profile, loading, signOut, setProfile }}>
       {children}
     </AuthCtx.Provider>
-
   )
-
-  
 }
 
 export const useAuth = () => useContext(AuthCtx)

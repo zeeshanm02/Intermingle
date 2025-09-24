@@ -8,7 +8,7 @@ import { uploadProfilePicture, deleteProfilePicture } from "../../services/avata
 
 export default function Sidebar() {
   const location = useLocation()
-  const { user, profile } = useAuth() // ✅ make sure AuthProvider gives `user`
+  const { user, profile, setProfile } = useAuth() // ✅ now we use setProfile
   
   const handleChange = async () => {
     if (!user) return
@@ -19,8 +19,8 @@ export default function Sidebar() {
       const file = e.target.files[0]
       if (file) {
         try {
-          await uploadProfilePicture(user.id, file)
-          window.location.reload() // 🔄 reload to refresh sidebar image
+          const url = await uploadProfilePicture(user.id, file)
+          setProfile((prev) => prev ? { ...prev, profile_picture_url: url } : prev) // ✅ update instantly
         } catch (err) {
           console.error("Error uploading profile picture:", err)
         }
@@ -33,7 +33,7 @@ export default function Sidebar() {
     if (!user) return
     try {
       await deleteProfilePicture(user.id)
-      window.location.reload()
+      setProfile((prev) => prev ? { ...prev, profile_picture_url: null } : prev) // ✅ clear instantly
     } catch (err) {
       console.error("Error deleting profile picture:", err)
     }
@@ -56,8 +56,10 @@ export default function Sidebar() {
           alt="Profile"
           className="w-24 h-24 rounded-full border-2 border-gray-300 shadow-md object-cover"
         />
-        <h2 className="mt-3 text-lg font-semibold text-gray-800">
-          {profile?.full_name || profile?.email || "Loading..."}
+        <h2 className="mt-3 text-lg font-semibold text-gray-800 text-center">
+          {profile?.full_name
+            ? `Hello, ${profile.full_name.split(" ")[0]} 👋`
+            : "Hello 👋"}
         </h2>
 
         {/* Change/Delete Buttons */}
