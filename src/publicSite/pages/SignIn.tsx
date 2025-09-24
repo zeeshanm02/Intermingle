@@ -54,22 +54,29 @@ export default function SignIn() {
         | <Link to="/signup" className="text-blue-600 hover:underline">Sign up</Link>
       </div>
 
-      <div className="bg-blue-50 border-2 border-black rounded-md shadow-[4px_4px_0px_black] p-8">
+      <div className="bg-blue-50 border-2 border-black rounded-md shadow-[4px_4px_0px_black] p-8 max-w-sm mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-center">Log in</h2>
-        <form onSubmit={handleSignIn}>
+
+        <form onSubmit={handleSignIn} className="space-y-4">
           <Input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <Input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <Button label="Let’s go!" type="submit" />
+
+          <Button type="submit" className="w-full">
+            Let’s go!
+          </Button>
+
           {error && <p className="text-red-600 mt-2">{error}</p>}
         </form>
       </div>

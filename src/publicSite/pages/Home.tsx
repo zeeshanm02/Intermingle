@@ -11,9 +11,13 @@ export default function Home() {
         <h2 className="text-3xl font-bold mb-2">Welcome to Intermingle</h2>
         <p className="text-gray-600 mb-6">Start your journey today</p>
 
-        <div className="flex flex-col gap-4">
-          <Button label="Sign In" onClick={() => navigate("/signin")} />
-          <Button label="Sign Up" onClick={() => navigate("/signup")} />
+        <div className="flex flex-col gap-4 max-w-xs mx-auto">
+          <Button onClick={() => navigate("/signin")} className="w-full">
+            Sign In
+          </Button>
+          <Button onClick={() => navigate("/signup")} className="w-full">
+            Sign Up
+          </Button>
         </div>
       </div>
     </AuthLayout>
