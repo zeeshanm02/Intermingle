@@ -1,8 +1,43 @@
-import { HomeIcon, DocumentTextIcon, BriefcaseIcon, UserIcon, Cog6ToothIcon } from "@heroicons/react/24/outline"
+import { 
+  HomeIcon, DocumentTextIcon, BriefcaseIcon, UserIcon, Cog6ToothIcon 
+} from "@heroicons/react/24/outline"
 import { Link, useLocation } from "react-router-dom"
+import { useAuth } from "../../../auth/AuthProvider"
+import defaultPFP from "../../../assets/defaultPFP.jpg"
+import { uploadProfilePicture, deleteProfilePicture } from "../../services/avatarService"
 
 export default function Sidebar() {
   const location = useLocation()
+  const { user, profile } = useAuth() // ✅ make sure AuthProvider gives `user`
+  
+  const handleChange = async () => {
+    if (!user) return
+    const input = document.createElement("input")
+    input.type = "file"
+    input.accept = "image/*"
+    input.onchange = async (e: any) => {
+      const file = e.target.files[0]
+      if (file) {
+        try {
+          await uploadProfilePicture(user.id, file)
+          window.location.reload() // 🔄 reload to refresh sidebar image
+        } catch (err) {
+          console.error("Error uploading profile picture:", err)
+        }
+      }
+    }
+    input.click()
+  }
+
+  const handleDelete = async () => {
+    if (!user) return
+    try {
+      await deleteProfilePicture(user.id)
+      window.location.reload()
+    } catch (err) {
+      console.error("Error deleting profile picture:", err)
+    }
+  }
 
   const items = [
     { icon: <HomeIcon className="w-5 h-5" />, label: "Dashboard", path: "/candidate/dashboard" },
@@ -17,11 +52,29 @@ export default function Sidebar() {
       {/* Profile */}
       <div className="flex flex-col items-center mb-8">
         <img
-          src="https://via.placeholder.com/80"
+          src={profile?.profile_picture_url || defaultPFP}
           alt="Profile"
-          className="w-20 h-20 rounded-full border-2 border-black"
+          className="w-24 h-24 rounded-full border-2 border-gray-300 shadow-md object-cover"
         />
-        <h2 className="mt-3 font-semibold text-center">John Candidate</h2>
+        <h2 className="mt-3 text-lg font-semibold text-gray-800">
+          {profile?.full_name || profile?.email || "Loading..."}
+        </h2>
+
+        {/* Change/Delete Buttons */}
+        <div className="flex gap-3 mt-3">
+          <button
+            onClick={handleChange}
+            className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 transition"
+          >
+            Change
+          </button>
+          <button
+            onClick={handleDelete}
+            className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md shadow hover:bg-red-700 transition"
+          >
+            Delete
+          </button>
+        </div>
       </div>
 
       {/* Navigation */}

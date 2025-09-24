@@ -8,6 +8,7 @@ type Profile = {
   full_name?: string
   email?: string
   role: "candidate" | "entity" | "admin"
+  profile_picture_url?: string | null 
 }
 
 type AuthContextType = {
@@ -15,14 +16,19 @@ type AuthContextType = {
   profile: Profile | null
   loading: boolean
   signOut: () => Promise<void>
+  setProfile: React.Dispatch<React.SetStateAction<Profile | null>> // ✅ add this
 }
+
 
 const AuthCtx = createContext<AuthContextType>({
   user: null,
   profile: null,
   loading: true,
   signOut: async () => {},
+  setProfile: () => {}, // ✅ dummy function so context type is satisfied
 })
+
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null)
@@ -61,9 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthCtx.Provider value={{ user, profile, loading, signOut }}>
+    <AuthCtx.Provider value={{ user, profile, loading, signOut, setProfile }}>
       {children}
     </AuthCtx.Provider>
+
   )
 
   
