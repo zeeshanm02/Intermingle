@@ -33,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // ✅ subscribe to auth state changes
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -51,7 +52,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setLoading(false)
     }
+
     init()
+
+    // listen to login/logout
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (!session?.user) {
+        setProfile(null)
+      } else {
+        // refetch profile when user logs in
+        supabase
+          .from("profiles")
+          .select("id, full_name, email, role, profile_picture_url, location, affidavit")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (!error && data) setProfile(data)
+          })
+      }
+    })
+
+    return () => {
+      subscription.subscription.unsubscribe()
+    }
   }, [])
 
   const signOut = async () => {
