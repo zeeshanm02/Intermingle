@@ -50,11 +50,10 @@ export default function ProjectsSection() {
     if (!user?.user || !newTitle.trim()) return
 
     const project = await addProject(user.user.id, {
-  title: newTitle.trim(),
-  description: newDescription.trim(),
-  link: newLink.trim() || undefined,
-})
-
+      title: newTitle.trim(),
+      description: newDescription.trim(),
+      link: newLink.trim() || undefined,
+    })
 
     if (newFiles && newFiles.length > 0) {
       await uploadProjectImages(Array.from(newFiles), user.user.id, project.id)
@@ -154,41 +153,48 @@ export default function ProjectsSection() {
 
           {/* Add Project Form */}
           {showForm && (
-            <div className="mt-4 space-y-2 p-3 border rounded-md bg-gray-50">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleAdd()
+              }}
+              className="flex flex-col gap-3 mt-4"
+            >
               <input
                 type="text"
                 placeholder="Project title"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                className="w-full p-2 border rounded"
+                className="border p-2 rounded bg-white border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+                required
               />
               <textarea
                 placeholder="Project description"
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
-                className="w-full p-2 border rounded"
+                className="border p-2 rounded bg-white border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
               />
               <input
                 type="url"
                 placeholder="Project link (optional)"
                 value={newLink}
                 onChange={(e) => setNewLink(e.target.value)}
-                className="w-full p-2 border rounded"
+                className="border p-2 rounded bg-white border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
               />
               <input
                 type="file"
                 accept="image/*"
                 multiple
                 onChange={(e) => setNewFiles(e.target.files)}
-                className="w-full"
+                className="border p-2 rounded bg-white border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
               />
               <button
-                onClick={handleAdd}
-                className="w-full bg-blue-500 text-white font-bold py-2 rounded-md border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-blue-600"
+                type="submit"
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-md border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
               >
                 Save Project
               </button>
-            </div>
+            </form>
           )}
         </>
       )}

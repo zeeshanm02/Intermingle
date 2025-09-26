@@ -1,3 +1,4 @@
+// src/candidate/components/profile/Documents.tsx
 import { useEffect, useState } from "react"
 import { supabase } from "../../../../lib/supabaseClient"
 import {
@@ -7,7 +8,6 @@ import {
   type Document,
 } from "../../../services/profileServices/documentsService"
 import { Card } from "../../../../components/layout/Card"
-import Button from "../../../../components/ui/Button"
 
 export default function Documents() {
   const [documents, setDocuments] = useState<(Document & { signedUrl?: string })[]>([])
@@ -52,22 +52,35 @@ export default function Documents() {
   return (
     <Card title="Documents">
       {/* Upload form */}
-      <div className="flex gap-2 mb-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          handleUpload()
+        }}
+        className="flex flex-col gap-3 mb-4"
+      >
         <input
           type="text"
           placeholder="Document name (e.g. Resume, Certificate)"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="border p-2 rounded flex-1"
+          className="border p-2 rounded border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          required
         />
         <input
           type="file"
           multiple
           onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-          className="border p-2 rounded"
+          className="border p-2 rounded border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          required
         />
-        <Button onClick={handleUpload}>Upload</Button>
-      </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-md border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+        >
+          Upload
+        </button>
+      </form>
 
       {/* Documents list */}
       {loading ? (
@@ -93,12 +106,12 @@ export default function Documents() {
                   View Document
                 </a>
               </div>
-              <Button
+              <button
                 onClick={() => handleDelete(doc.id)}
-                className="bg-red-500 hover:bg-red-600 text-white"
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
               >
                 Delete
-              </Button>
+              </button>
             </li>
           ))}
         </ul>
