@@ -1,6 +1,6 @@
 
 import { Card } from "../../components/layout/Card"
-import Sidebar from "../components/layout/Sidebar"
+import Sidebar from "../components/layout/CandidateSidebar"
 
 export default function CandidateDashboard() {
   return (

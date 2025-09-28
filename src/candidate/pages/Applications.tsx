@@ -1,4 +1,4 @@
-import Sidebar from "../components/layout/Sidebar"
+import Sidebar from "../components/layout/CandidateSidebar"
 
 export default function Applications() {
   return (

@@ -14,6 +14,12 @@ import ExploreJobs from "./candidate/pages/ExploreJobs"
 import Profile from "./candidate/pages/Profile"
 import Settings from "./candidate/pages/Settings"
 
+import PostJob from "./entity/pages/PostJob"
+import JobPostings from "./entity/pages/JobPostings"
+import Applicants from "./entity/pages/Applicants"
+import EntitySettings from "./entity/pages/Settings"
+
+
 export default function App() {
 
   
@@ -40,9 +46,15 @@ export default function App() {
           </Route>
 
           {/* Entity-only */}
+          {/* Entity-only */}
           <Route element={<RequireAuth allowedRoles={["entity"]} />}>
             <Route path="/entity/dashboard" element={<EntityDashboard />} />
+            <Route path="/entity/post-job" element={<PostJob />} />
+            <Route path="/entity/job-postings" element={<JobPostings />} />
+            <Route path="/entity/applicants" element={<Applicants />} />
+            <Route path="/entity/settings" element={<EntitySettings />} />
           </Route>
+
 
           {/* Admin-only */}
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
