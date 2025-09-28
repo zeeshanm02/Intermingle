@@ -2,9 +2,9 @@ import {
   HomeIcon, DocumentTextIcon, BriefcaseIcon, UserIcon, Cog6ToothIcon 
 } from "@heroicons/react/24/outline"
 import { Link, useLocation } from "react-router-dom"
-import { useAuth } from "../../auth/AuthProvider"
-import defaultPFP from "../../assets/defaultPFP.jpg"
-import { uploadProfilePicture, deleteProfilePicture } from "../../candidate/services/avatarService"
+import { useAuth } from "../../../auth/AuthProvider"
+import defaultPFP from "../../../assets/defaultPFP.jpg"
+import { uploadProfilePicture, deleteProfilePicture } from "../../services/avatarService"
 
 export default function Sidebar() {
   const location = useLocation()

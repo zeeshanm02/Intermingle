@@ -1,4 +1,4 @@
-import Sidebar from "../../components/layout/Sidebar"
+import Sidebar from "../components/layout/Sidebar"
 
 // Profile section components
 import PersonalInfo from "../components/profile/personalInfo/PersonalInfo"

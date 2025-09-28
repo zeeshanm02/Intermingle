@@ -1,4 +1,4 @@
-import Sidebar from "../../components/layout/Sidebar"
+import Sidebar from "../components/layout/Sidebar"
 import { useSettings } from "../hooks/useSettings"
 import ChangeEmail from "../components/settings/ChangeEmail"
 import ChangePassword from "../components/settings/ChangePassword"
@@ -30,7 +30,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </main>
-
     </div>
   )
 }

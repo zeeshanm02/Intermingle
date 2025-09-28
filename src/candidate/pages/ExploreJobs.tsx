@@ -1,4 +1,4 @@
-import Sidebar from "../../components/layout/Sidebar"
+import Sidebar from "../components/layout/Sidebar"
 import AppButton from "../../components/ui/AppButton"
 
 export default function ExploreJobs() {
