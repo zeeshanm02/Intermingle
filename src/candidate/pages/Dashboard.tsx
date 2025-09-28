@@ -1,5 +1,6 @@
-import Sidebar from "../components/layout/Sidebar"
+
 import { Card } from "../../components/layout/Card"
+import Sidebar from "../../components/layout/Sidebar"
 
 export default function CandidateDashboard() {
   return (
@@ -12,20 +13,7 @@ export default function CandidateDashboard() {
         <h1 className="text-2xl font-bold mb-6">Welcome back, John!</h1>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card
-            title="Applications in Progress"
-            content="3 ongoing applications"
-          />
-          <Card
-            title="Interviews Scheduled"
-            content="2 upcoming interviews"
-          />
-          <Card
-            title="Recommended Jobs"
-            content="5 new matches today"
-          />
-        </div>
+       
 
         {/* Section: Recent Applications */}
         <section className="mt-10">
