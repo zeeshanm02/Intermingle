@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { supabase } from "../../lib/supabaseClient"
 import CandidateSidebar from "../components/layout/CandidateSidebar"
+import { applyToJob } from "../services/applicationServices"
 
 type Job = {
   id: string
@@ -24,6 +25,8 @@ export default function JobDetails() {
   const navigate = useNavigate()
   const [job, setJob] = useState<Job | null>(null)
   const [loading, setLoading] = useState(true)
+  const [applying, setApplying] = useState(false)
+  const [message, setMessage] = useState("")
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -43,6 +46,22 @@ export default function JobDetails() {
 
     fetchJob()
   }, [id])
+
+  const handleApply = async () => {
+    if (!job) return
+    setApplying(true)
+    setMessage("")
+
+    try {
+      await applyToJob(job)
+      setMessage("✅ Application submitted successfully!")
+    } catch (err: any) {
+      console.error("Error applying:", err)
+      setMessage("❌ Failed to submit application. Please complete your profile and try again.")
+    } finally {
+      setApplying(false)
+    }
+  }
 
   return (
     <div className="flex min-h-screen bg-[#f5faff]">
@@ -98,11 +117,27 @@ export default function JobDetails() {
             {/* Apply button */}
             <div className="mt-6">
               <button
-                onClick={() => alert("Apply functionality goes here!")}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
+                onClick={handleApply}
+                disabled={applying}
+                className={`px-6 py-2 rounded-md shadow transition ${
+                  applying
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
               >
-                Apply Now
+                {applying ? "Applying..." : "Apply Now"}
               </button>
+              {message && (
+                <p
+                  className={`mt-3 text-sm ${
+                    message.startsWith("✅")
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {message}
+                </p>
+              )}
             </div>
           </div>
         )}

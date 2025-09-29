@@ -3,7 +3,13 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabaseClient"
 import { Card } from "../../components/layout/Card"
 import EntitySidebar from "../components/layout/EntitySidebar"
-import { ListBulletIcon, Squares2X2Icon, MagnifyingGlassIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
+import {
+  ListBulletIcon,
+  Squares2X2Icon,
+  MagnifyingGlassIcon,
+  PencilSquareIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline"
 import { Link } from "react-router-dom"
 
 type Job = {
@@ -137,6 +143,17 @@ export default function JobPostings() {
                     💰 ${job.salary_min} – ${job.salary_max}
                   </p>
                 </Link>
+
+                {/* View Applicants button */}
+                <div className="mt-4">
+                  <Link
+                    to={`/entity/job/${job.id}/applicants`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md shadow hover:bg-green-700 transition"
+                  >
+                    <UsersIcon className="w-5 h-5" />
+                    View Applicants
+                  </Link>
+                </div>
               </Card>
             ))}
           </div>
@@ -166,6 +183,17 @@ export default function JobPostings() {
                     💰 ${job.salary_min} – ${job.salary_max}
                   </p>
                 </Link>
+
+                {/* View Applicants button */}
+                <div className="mt-4">
+                  <Link
+                    to={`/entity/job/${job.id}/applicants`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md shadow hover:bg-green-700 transition"
+                  >
+                    <UsersIcon className="w-5 h-5" />
+                    View Applicants
+                  </Link>
+                </div>
               </Card>
             ))}
           </div>

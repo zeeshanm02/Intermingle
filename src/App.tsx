@@ -54,10 +54,9 @@ export default function App() {
             <Route path="/entity/job-postings" element={<JobPostings />} />
             <Route path="/entity/job/:id" element={<JobDetails />} />
             <Route path="/entity/job/:id/edit" element={<EditJob />} />
-            <Route path="/entity/applicants" element={<Applicants />} />
+            <Route path="/entity/job/:id/applicants" element={<Applicants />} /> {/* ✅ FIXED */}
             <Route path="/entity/settings" element={<EntitySettings />} />
           </Route>
-
           {/* Admin-only */}
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
