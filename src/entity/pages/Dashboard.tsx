@@ -1,4 +1,4 @@
-import EntitySidebar from "../components/layout/EnttitySidebar"
+import EntitySidebar from "../components/layout/EntitySidebar"
 
 export default function EntityDashboard() {
   return (
